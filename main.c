@@ -11,6 +11,8 @@
 #include "pd_api.h"
 
 static PlaydateAPI *pd = NULL;
+static int PX_WIDTH = 400;
+static int PX_HEIGHT = 280;
 
 static int update(void *ud) {
   // NOTE: Keeping these around from the Game of Life because I'm worried that
@@ -20,12 +22,20 @@ static int update(void *ud) {
   // about it
   /* pd->graphics->markUpdatedRows(0, LCD_ROWS); */
 
+  LCDBitmap *stencil =
+      pd->graphics->newBitmap(PX_WIDTH, PX_HEIGHT, kColorWhite);
+  pd->graphics->pushContext(stencil);
+  pd->graphics->drawText("Hello!", 6, kASCIIEncoding, PX_WIDTH / 2,
+                         PX_HEIGHT / 2);
+  pd->graphics->popContext();
+  pd->graphics->setStencil(stencil);
+
   double angleDegrees = (double)pd->system->getCrankAngle();
   double angle = (angleDegrees * 2 * M_PI) / 360;
-  int centerX = 400 / 2;
-  int centerY = 280 / 2;
+  int centerX = PX_WIDTH / 2;
+  int centerY = PX_HEIGHT / 2;
   // Should be the pythagorean theorm for the cente rpoint
-  int radius = 400;
+  int radius = PX_WIDTH;
   pd->graphics->drawLine(centerX + (cos(angle) * radius),
                          centerY - (sin(angle) * radius),
                          centerX - (cos(angle) * radius),
